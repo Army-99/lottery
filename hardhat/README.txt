@@ -1,3 +1,5 @@
+https://www.youtube.com/watch?v=gyMwXuJrbJQ
+
 yarn init
 yarn add --dev hardhat
 yarn hardhat
