@@ -1,5 +1,7 @@
 const { network, ethers } = require("hardhat");
 const { developmentChains, networkConfig } = require("../helper-hardhat-config");
+const { verify } = require("../utils/verify");
+require("dotenv").config()
 
 const VRF_SUB_FUND_AMOUNT = ethers.utils.parseEther("30")
 
@@ -28,7 +30,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
 
     const args = [vrfCoordinatorV2Address, entranceFee, gasLane, subscriptionId, callbackGasLimit, interval];
 
-    console.log(args)
+    //console.log(args)
 
     const lottery = await deploy("Lottery", {
         from: deployer,
@@ -37,6 +39,10 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
         waitConfirmations: network.config.blockConfirmations || 1
     });
 
-    console.log(lottery.address);
-
+    console.log("Deployed at: " + lottery.address);
+    if(!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY){
+        await verify(lottery.address, args);
+    }
 }
+
+module.exports.tags = ["all", "lottery"];

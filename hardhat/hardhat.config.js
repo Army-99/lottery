@@ -8,9 +8,7 @@ require("dotenv").config()
 
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
-
-console.log(PRIVATE_KEY)
-
+const ETHERSCAN_API = process.env.ETHERSCAN_API_KEY;
 
 module.exports = {
     defaultNetwork: "hardhat",
@@ -20,11 +18,11 @@ module.exports = {
             blockConfirmations: 1
         },
         goerli: {
-            chainId: 420,
+            chainId: 5,
             blockConfirmations: 6,
             url: GOERLI_RPC_URL,
             accounts: [PRIVATE_KEY]
-          }
+        },
     },
     solidity: "0.8.7",
     namedAccounts: {
@@ -35,4 +33,7 @@ module.exports = {
             default: 1,
         },
     },
+    etherscan: {
+        apiKey: ETHERSCAN_API
+      }
 };
