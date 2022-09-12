@@ -3,7 +3,7 @@ const { network, getNamedAccounts, deployments, ethers } = require("hardhat");
 const { developmentChains, networkConfig } = require("../../helper-hardhat-config");
 
 !developmentChains.includes(network.name) 
-    ? describe.skip()
+    ? describe.skip
     : describe("Lottery Unit Test", function() {
         let lottery, vrfCoordinator, lotteryEntranceFee, deployer, interval;
         const chainId = network.config.chainId;

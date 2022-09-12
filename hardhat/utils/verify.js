@@ -3,7 +3,7 @@ const { run } = require("hardhat")
 const verify = async(contractAddress, args) => {
     console.log("Verifing...");
     try{
-        await run("verify:verify --network goerli", {
+        await run("verify:verify", {
             address: contractAddress,
             constructorArguments: args
         })
