@@ -1,3 +1,6 @@
+yarn add  @web3uikit/core @web3uikit/web3 @web3uikit/icons
+https://web3ui.github.io/
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
