@@ -24,7 +24,7 @@ error Lottery__UpkeepNotNeeded(uint currentBalance,uint playersCounter,uint lott
 */
 
 contract Lottery is VRFConsumerBaseV2, KeeperCompatibleInterface{
-    /* Type Declarations */
+    /* Type Declaration */
     enum LotteryState{
         OPEN,
         CALCULATING
