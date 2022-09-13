@@ -14,11 +14,12 @@ const LotteryEntrance = () => {
     const [ entranceFee, setEntranceFee ] = useState("0");
     const [ numPlayers, setNumberPlayers ] = useState("0");
     const [ recentWinner, setRecentWinner ] = useState("");
+    const [ isLoading, setIsLoading ] = useState(false);
 
     const dispatch = useNotification();
 
     /* SMART CONTRACT CALLS */
-    const { runContractFunction: enterLottery } = useWeb3Contract({
+    const { runContractFunction: enterLottery, isFetching } = useWeb3Contract({
         abi: abi,
         contractAddress: lotteryAddress,
         functionName: "enterLottery",
@@ -48,11 +49,11 @@ const LotteryEntrance = () => {
     })
     
     const updateUIValues = async() => {
-        const entranceFeeCall = (await getEntranceFee()).toString();
-        const numPlayersCall = (await getPlayersNumber()).toString();
+        const entranceFeeCall = await getEntranceFee();
+        const numPlayersCall = await getPlayersNumber();
         const recentWinnerCall = await getRecentWinner();
-        setEntranceFee(entranceFeeCall);
-        setNumberPlayers(numPlayersCall);
+        setEntranceFee(entranceFeeCall? entranceFeeCall.toString() : "0");
+        setNumberPlayers(numPlayersCall? numPlayersCall.toString() : "0");
         setRecentWinner(recentWinnerCall);
     }
 
@@ -62,41 +63,75 @@ const LotteryEntrance = () => {
         }
     }, [isWeb3Enabled])
 
-    /* NOTIFICATIONS */
-    const handleSuccess = async(tx) => {
-        await tx.wait(1);
-        handleNewNotification(tx);
-        updateUIValues();
-    }
+    /* ON BUTTON CLICK */
+    const HandleButton = async() => {
+        setIsLoading(true);
+        try{
+            const tx = await enterLottery();
+            await tx.wait(1);
+            handleNewNotification("info","Transaction completed successfully");
+            updateUIValues();
+        }catch(error){
+            handleNewNotification("error", "Transaction error");
+        }finally{
+            setIsLoading(false);
+        }
+    };
 
-    const handleNewNotification = () => {
+    const handleNewNotification = (type, msg) => {
         dispatch({
-            type: "info",
-            message: "Transaction Complete!",
+            type: type,
+            message: msg,
             title: "Tx Notification",
             position: "topR",
-            icon: <Bell fontSize={20}/>
         })
     }
 
+
     return(
-        <div className='p-5'>
+
+        <div className='min-w-screen min-h-screen bg-yellow-500 flex items-center justify-center px-5 py-5" x-data="beer()" x-init="start()'>
             { lotteryAddress ? 
             <>
-                <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full ml-auto' onClick={async() => {
-                                            await enterLottery({
-                                                onSuccess: handleSuccess,
-                                                onError: (error) => console.error(error)
-                                            })
-                                            }}>{}</button>
-                <p>Entrance Fee: {ethers.utils.formatUnits(entranceFee, "ether")} ETH</p>
-                <p>Number Of Players: {numPlayers}</p>
-                <p>Last Winner: {recentWinner}</p>
+                <h1></h1>
+                <div className="text-center p-3">
+                    <p>Cost</p>
+                    <p>{ethers.utils.formatUnits(entranceFee, "ether")} ETH</p>
+                </div>
+                
+                <div className="text-center p-3">
+                    <p>Number Of Players</p>
+                    <p>{numPlayers}</p>
+                </div>
+                
+                <div className="text-center p-3">
+                    <p>Last Winner</p>
+                    <p>{recentWinner.slice(0,6)}...{recentWinner.slice(recentWinner.length-4,recentWinner.length)}</p>
+                </div>
+                
+                <button 
+                disabled={isLoading || isFetching}
+                className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mt-2' 
+                        onClick={HandleButton}>
+                        {
+                            (isLoading || isFetching) 
+                            ? <svg className="animate-spin spinner-border h-8 w-8 border-b-2 rounded-full" />
+                            : <p>JOIN</p>
+                        }
+                        
+                </button>
             </>
             :
-            <div>
-                The chain is not supported yet!
-            </div>
+            (
+                isWeb3Enabled 
+                ?   <div>
+                        The chain is not supported yet.
+                    </div>
+                :   <div>
+                        Connect the wallet for play!
+                    </div>
+            )
+            
             }
         </div>
     );
