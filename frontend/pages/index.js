@@ -5,7 +5,7 @@ import Countdown from '../components/UI/Countdown'
 
 export default function Home() {
   return (
-    <div className='h-screen'>
+    <div className='h-screen text-white bg-black'>
       <Head>
         <title>Lottery</title>
         <meta name="description" content="Smart contract Lottery" />
