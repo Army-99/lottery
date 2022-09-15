@@ -7,6 +7,7 @@ require("hardhat-contract-sizer");
 require("dotenv").config()
 
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL;
+const MUMBAI_RPC_URL = process.env.MUMBAI_RPC_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const ETHERSCAN_API = process.env.ETHERSCAN_API_KEY;
 
@@ -23,6 +24,12 @@ module.exports = {
             url: GOERLI_RPC_URL,
             accounts: [PRIVATE_KEY]
         },
+        mumbai: {
+            chainId: 80001,
+            blockConfirmations: 6,
+            url: MUMBAI_RPC_URL,
+            accounts: [PRIVATE_KEY]
+        },
     },
     solidity: "0.8.7",
     namedAccounts: {
@@ -36,7 +43,8 @@ module.exports = {
     mocha: {
         timeout: 200000
     },
-    etherscan: {
-        apiKey: ETHERSCAN_API
+    verify: {
+        goerli: ETHERSCAN_API,
+        mumbai: "YOUR_MUMBAI_API_KEY",
       }
 };
