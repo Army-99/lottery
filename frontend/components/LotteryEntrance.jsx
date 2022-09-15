@@ -1,6 +1,5 @@
-import { useWeb3Contract } from 'react-moralis';
-import {abi, contractAddresses} from "../constants";
-import { useMoralis } from 'react-moralis';
+import { abi, contractAddresses } from "../constants";
+import { useMoralis, useWeb3Contract, useChain } from 'react-moralis';
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { useNotification } from '@web3uikit/core';
@@ -8,8 +7,10 @@ import Countdown from './UI/Countdown';
 
 const LotteryEntrance = () => {
     const { chainId: chainIdHex, isWeb3Enabled } = useMoralis();
+    const { chain } = useChain();
     const chainID = parseInt(chainIdHex);
     const lotteryAddress = chainID in contractAddresses ? contractAddresses[chainID][0] : null;
+    
     const [ entranceFee, setEntranceFee ] = useState("0");
     const [ numPlayers, setNumberPlayers ] = useState("0");
     const [ recentWinner, setRecentWinner ] = useState("");
@@ -60,13 +61,12 @@ const LotteryEntrance = () => {
         if (isWeb3Enabled) {
             updateUIValues()
         }
-    }, [isWeb3Enabled])
+    }, [isWeb3Enabled, chain])
 
     /* ON BUTTON CLICK */
     const HandleButton = async() => {
         setIsLoading(true);
         try{
-            console.log()
             const tx = await enterLottery();
             await tx.wait(1);
             handleNewNotification("info","Transaction completed successfully");
@@ -96,7 +96,7 @@ const LotteryEntrance = () => {
                 <h1></h1>
                 <div className="text-center p-3">
                     <p>Cost</p>
-                    <p>{ethers.utils.formatUnits(entranceFee, "ether")} ETH</p>
+                    <p>{ethers.utils.formatUnits(entranceFee, "ether")} {chain.nativeCurrency.symbol}</p>
                 </div>
                 
                 <div className="text-center p-3">
@@ -127,14 +127,14 @@ const LotteryEntrance = () => {
             :
             (
                 isWeb3Enabled 
-                ?   <div className='flex items-center justify-center mt-20'>
-                        <h1 className='text-2xl text-red-500'>The chain is not supported yet.</h1>
+                ?   <div className='flex-row mt-20'>
+                        <h1 className='text-2xl text-red-500 text-center'>The chain is not supported yet.</h1>
+                        <h2 className='text-xl text-red-500 text-center' >Supported Chains: Goerli, Mumbai Testnet, BSC Testnet</h2>
                     </div>
                 :   <div className='flex items-center justify-center mt-20'>
                         <h1 className='text-2xl text-red-500'>Connect the wallet for play!</h1>
                     </div>
             )
-            
             }
         </div>
     );
