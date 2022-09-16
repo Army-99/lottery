@@ -21,7 +21,7 @@ const networkConfig = {
     },
     97: {
         name: "bsctestnet",
-        vrfCordinatorV2: "0xc587d9053cd1118f25F645F9E08BB98c9712A4EE",
+        vrfCordinatorV2: "0x6A2AAd07396B36Fe02a22b33cf443582f682c82f",
         entranceFee: ethers.utils.parseEther("0.01"),
         gasLane: "0xba6e730de88d94a5510ae6613898bfb0c3de5d16e609c5b7da808747125506f7",
         subscriptionId: "1829",
